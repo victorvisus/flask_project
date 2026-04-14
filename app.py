@@ -25,13 +25,13 @@ except Exception as e:
 
 print("Antes de crear tablas: ", client.list_database_names())
 
-# crear base de datos: db = client["thirty_days_of_python"]
-db = client["thirty_days_of_python"]
-# crear la coleccion students e insertar un documento
+# CREAR BASE DE DATOS: db = client["thirty_days_of_python"]
+db = client["thirty_days_of_python"]  # la primera vez se crea la base de datos
+# CREAR COLECCIONES/TABLAS: students e insertar un documento
 # db.students.insert_one({"name": "Asabeneh", "country": "Finland", "city": "Helsinki", "age": 250})
 # print("Despues de crear tablas: ", client.list_database_names())
 
-# añade varios estudiantes
+# AÑADIR REGISTROS
 """ students = [
     {"name": "David", "country": "UK", "city": "London", "age": 34},
     {"name": "John", "country": "Sweden", "city": "Stockholm", "age": 28},
@@ -40,10 +40,43 @@ db = client["thirty_days_of_python"]
 for student in students:
     db.students.insert_one(student)
  """
-# consulta de datos:
+# CONSULTAS de datos:
 student = db.students.find_one({"_id": ObjectId("69de2961a08894a7eb124015")})
 print(student)
 
+students = db.students.find()
+print("registros con find(), con todos los campos -------------------")
+for student in students:
+    print(student)
+
+students = db.students.find(
+    {}, {"_id": 0, "name": 1, "country": 1}
+)  # 0 excluir, 1 incluir
+print("registros con find(), con campos seleccionados -------------------")
+for student in students:
+    print(student)
+
+# ACTUALIZAR REGISTROS
+db.students.update_one({"name": "Asabeneh"}, {"$set": {"country": "Finland"}})
+
+# ELIMINAR REGISTROS
+db.students.delete_one({"name": "David"})
+db.students.delete_many({"name": "Asabeneh"})
+
+#
+# CONSULTAS de datos, WHERE "name": "Asabeneh"
+consulta = {"name": "Asabeneh"}
+students = db.students.find(
+    consulta, {"_id": 0, "name": 1, "country": 1}
+)  # 0 excluir, 1 incluir
+print(
+    "registros con find(), name: Asabeneh con campos seleccionados -------------------"
+)
+for student in students:
+    print(student)
+#
+#
+#
 app = Flask(__name__)
 
 
