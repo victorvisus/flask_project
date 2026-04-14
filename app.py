@@ -1,11 +1,16 @@
 import os  # importar el módulo del sistema operativo
 
+from bson import ObjectId
+from dotenv import load_dotenv
 from flask import Flask, render_template, request
 from pymongo.mongo_client import MongoClient
 from pymongo.server_api import ServerApi
 
+load_dotenv()
+
 # Base de datos MongoDB
-MONGO_URI = "mongodb+srv://victorvxg_db_user:ngvdKu8AKbtMDuUA@vichox.svkibw2.mongodb.net/?appName=vichox"
+# MONGO_URI = "mongodb+srv://victorvxg_db_user:ngvdKu8AKbtMDuUA@vichox.svkibw2.mongodb.net/?appName=vichox"
+MONGO_URI = os.environ.get("MONGO_URI")
 
 # Create a new client and connect to the server
 client = MongoClient(MONGO_URI, server_api=ServerApi("1"))
@@ -14,10 +19,30 @@ client = MongoClient(MONGO_URI, server_api=ServerApi("1"))
 try:
     client.admin.command("ping")
     print("Pinged your deployment. You successfully connected to MongoDB!")
-    print(client.list_database_names())
+
 except Exception as e:
     print(e)
 
+print("Antes de crear tablas: ", client.list_database_names())
+
+# crear base de datos: db = client["thirty_days_of_python"]
+db = client["thirty_days_of_python"]
+# crear la coleccion students e insertar un documento
+# db.students.insert_one({"name": "Asabeneh", "country": "Finland", "city": "Helsinki", "age": 250})
+# print("Despues de crear tablas: ", client.list_database_names())
+
+# añade varios estudiantes
+""" students = [
+    {"name": "David", "country": "UK", "city": "London", "age": 34},
+    {"name": "John", "country": "Sweden", "city": "Stockholm", "age": 28},
+    {"name": "Sami", "country": "Finland", "city": "Helsinki", "age": 25},
+]
+for student in students:
+    db.students.insert_one(student)
+ """
+# consulta de datos:
+student = db.students.find_one({"_id": ObjectId("69de2961a08894a7eb124015")})
+print(student)
 
 app = Flask(__name__)
 
