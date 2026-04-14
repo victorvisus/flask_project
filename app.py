@@ -1,6 +1,23 @@
 import os  # importar el módulo del sistema operativo
 
 from flask import Flask, render_template, request
+from pymongo.mongo_client import MongoClient
+from pymongo.server_api import ServerApi
+
+# Base de datos MongoDB
+MONGO_URI = "mongodb+srv://victorvxg_db_user:ngvdKu8AKbtMDuUA@vichox.svkibw2.mongodb.net/?appName=vichox"
+
+# Create a new client and connect to the server
+client = MongoClient(MONGO_URI, server_api=ServerApi("1"))
+
+# Send a ping to confirm a successful connection
+try:
+    client.admin.command("ping")
+    print("Pinged your deployment. You successfully connected to MongoDB!")
+    print(client.list_database_names())
+except Exception as e:
+    print(e)
+
 
 app = Flask(__name__)
 
@@ -48,4 +65,5 @@ if __name__ == "__main__":
     # usamos variables de entorno para despliegue
     # funciona tanto para producción como para desarrollo
     port = int(os.environ.get("PORT", 5000))
-    app.run(debug=True, host="0.0.0.0", port=port)
+    app.run(debug=True, host="0.0.0.0", port=port, use_reloader=False)
+    # con use_reloader=False para aplicar los cambios hay que reiniciar a mano el servidor
