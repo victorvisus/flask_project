@@ -1,5 +1,6 @@
 import os  # importar el módulo del sistema operativo
 
+import certifi
 from bson import ObjectId
 from dotenv import load_dotenv
 from flask import Flask, render_template, request
@@ -10,10 +11,11 @@ load_dotenv()
 
 # Base de datos MongoDB
 # MONGO_URI = "mongodb+srv://victorvxg_db_user:ngvdKu8AKbtMDuUA@vichox.svkibw2.mongodb.net/?appName=vichox"
+ca = certifi.where()
 MONGO_URI = os.environ.get("MONGO_URI")
 
 # Create a new client and connect to the server
-client = MongoClient(MONGO_URI, server_api=ServerApi("1"))
+client = MongoClient(MONGO_URI, server_api=ServerApi("1"), tlsCAFile=ca)
 
 # Send a ping to confirm a successful connection
 try:
