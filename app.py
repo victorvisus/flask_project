@@ -10,7 +10,6 @@ from pymongo.server_api import ServerApi
 load_dotenv()
 
 # Base de datos MongoDB
-# MONGO_URI = "mongodb+srv://victorvxg_db_user:ngvdKu8AKbtMDuUA@vichox.svkibw2.mongodb.net/?appName=vichox"
 ca = certifi.where()
 MONGO_URI = os.environ.get("MONGO_URI")
 
