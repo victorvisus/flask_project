@@ -1,7 +1,6 @@
 import os  # importar el módulo del sistema operativo
 
 import certifi
-from bson import ObjectId
 from dotenv import load_dotenv
 from flask import Flask, render_template, request
 from pymongo.mongo_client import MongoClient
@@ -24,14 +23,14 @@ try:
 except Exception as e:
     print(e)
 
-print("Antes de crear tablas: ", client.list_database_names())
-
 # CREAR BASE DE DATOS: db = client["thirty_days_of_python"]
-db = client["thirty_days_of_python"]  # la primera vez se crea la base de datos
-# CREAR COLECCIONES/TABLAS: students e insertar un documento
-# db.students.insert_one({"name": "Asabeneh", "country": "Finland", "city": "Helsinki", "age": 250})
-# print("Despues de crear tablas: ", client.list_database_names())
+db = client.thirty_days_of_python  # la primera vez se crea la base de datos
 
+# CREAR COLECCIONES/TABLAS: students e insertar un documento
+"""
+db.students.insert_one({"name": "Asabeneh", "country": "Finland", "city": "Helsinki", "age": 250})
+print("Despues de crear tablas: ", client.list_database_names())
+"""
 # AÑADIR REGISTROS
 """ students = [
     {"name": "David", "country": "UK", "city": "London", "age": 34},
@@ -41,11 +40,34 @@ db = client["thirty_days_of_python"]  # la primera vez se crea la base de datos
 for student in students:
     db.students.insert_one(student)
  """
+
+# AÑADIR COLECCION teachers
+"""
+teachers = [
+    {"name": "Mr. Johnson", "country": "USA", "city": "New York", "age": 45},
+    {"name": "Ms. Rodriguez", "country": "Mexico", "city": "Mexico City", "age": 38},
+    {"name": "Mr. Lee", "country": "South Korea", "city": "Seoul", "age": 42},
+    {"name": "Ms. Brown", "country": "UK", "city": "London", "age": 40},
+    {"name": "Mr. Patel", "country": "India", "city": "Mumbai", "age": 35},
+]
+try:
+    for teacher in teachers:
+        db.teachers.insert_one(teacher)
+
+    print("teachers creado e insertados varios registros")
+    print("Despues de crear tablas: ", client.list_database_names())
+except Exception as e:
+    print(e)
+"""
+
 # CONSULTAS de datos:
-student = db.students.find_one({"_id": ObjectId("69de2961a08894a7eb124015")})
+"""
+student = db.students.find_one(
+    {"_id": ObjectId("69de2961a08894a7eb124015")}
+)  # consulta por ID
 print(student)
 
-students = db.students.find()
+students = db.students.find()  # todos los registros
 print("registros con find(), con todos los campos -------------------")
 for student in students:
     print(student)
@@ -56,16 +78,21 @@ students = db.students.find(
 print("registros con find(), con campos seleccionados -------------------")
 for student in students:
     print(student)
-
+"""
 # ACTUALIZAR REGISTROS
-db.students.update_one({"name": "Asabeneh"}, {"$set": {"country": "Finland"}})
-
+"""
+db.students.update_one(
+    {"name": "Asabeneh"}, {"$set": {"country": "Finland"}}
+)  # actualizar un registro, segun el FILTER/WHERE
+"""
 # ELIMINAR REGISTROS
-db.students.delete_one({"name": "David"})
-db.students.delete_many({"name": "Asabeneh"})
-
+"""
+db.students.delete_one({"name": "David"})  # eliminar un registro
+db.students.delete_many({"name": "Asabeneh"})  # eliminar varios
+"""
 #
 # CONSULTAS de datos, WHERE "name": "Asabeneh"
+"""
 consulta = {"name": "Asabeneh"}
 students = db.students.find(
     consulta, {"_id": 0, "name": 1, "country": 1}
@@ -75,9 +102,18 @@ print(
 )
 for student in students:
     print(student)
+"""
+cadena = {"age": {"$gt": 30, "$lt": 42}}
+teachers = db.teachers.find(cadena, {"_id": 0, "name": 1, "country": 1, "age": 1}).sort(
+    "age", -1
+)  # 0 excluir, 1 incluir, -1 descendente, 1 ascendente
+for teacher in teachers:
+    print(teacher)
 #
 #
 #
+##############################################################################################3
+
 app = Flask(__name__)
 
 
